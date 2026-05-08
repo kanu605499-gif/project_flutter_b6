@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'scaffol.dart'; // Memastikan file scaffol.dart diimpor untuk digunakan di main.dart
 
 void main() {
   runApp(const MyApp());
@@ -8,7 +9,7 @@ class MyApp extends StatelessWidget {
   const MyApp({super.key});
 
   // This widget is the root of your application.
-  @override
+  /* @override
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Flutter Demo',
@@ -28,9 +29,11 @@ class MyApp extends StatelessWidget {
         //
         // This works for code too, not just values: Most code changes can be
         // tested with just a hot reload.
-        colorScheme: .fromSeed(seedColor: Colors.deepPurple),
+        colorScheme: .fromSeed(
+          seedColor: const Color.fromARGB(255, 148, 32, 32),
+        ),
       ),
-      home: const MyHomePage(title: 'Flutter Demo Home Page'),
+      home: const MyHomePage(title: 'Project Amomim'),
     );
   }
 }
@@ -117,6 +120,14 @@ class _MyHomePageState extends State<MyHomePage> {
         tooltip: 'Increment',
         child: const Icon(Icons.add),
       ),
+    );
+  }*/
+
+  @override
+  Widget build(BuildContext context) {
+    return const MaterialApp(
+      debugShowCheckedModeBanner: false,
+      home: ProfilePage(),
     );
   }
 }
