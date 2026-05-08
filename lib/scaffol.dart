@@ -8,7 +8,7 @@ class ProfilePage extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         centerTitle: true,
-        title: const Text('Profil Saya'), // Instruksi: Judul AppBar
+        title: const Text('My Profile'), // Instruksi: Judul AppBar
         backgroundColor: const Color.fromARGB(255, 0, 0, 0),
         foregroundColor: Colors.white,
       ),
@@ -18,7 +18,7 @@ class ProfilePage extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             const Text(
-              'Nama: Kanu',
+              'Name: Kanu',
               style: TextStyle(
                 fontSize: 28,
                 fontWeight: FontWeight.w500,
