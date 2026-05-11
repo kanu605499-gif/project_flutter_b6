@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'scaffol.dart'; // Memastikan file scaffol.dart diimpor untuk digunakan di main.dart
+import 'container.dart'; // Memastikan file container.dart diimpor untuk digunakan di main.dart
 
 void main() {
   runApp(const MyApp());
@@ -127,7 +127,7 @@ class _MyHomePageState extends State<MyHomePage> {
   Widget build(BuildContext context) {
     return const MaterialApp(
       debugShowCheckedModeBanner: false,
-      home: ProfilePage(),
+      home: MyContainer(),
     );
   }
 }
