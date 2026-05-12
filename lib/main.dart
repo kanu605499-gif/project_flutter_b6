@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'container.dart'; // Memastikan file container.dart diimpor untuk digunakan di main.dart
+import 'grid.dart';
 
 void main() {
   runApp(const MyApp());
@@ -125,9 +125,6 @@ class _MyHomePageState extends State<MyHomePage> {
 
   @override
   Widget build(BuildContext context) {
-    return const MaterialApp(
-      debugShowCheckedModeBanner: false,
-      home: MyContainer(),
-    );
+    return MaterialApp(debugShowCheckedModeBanner: false, home: MyGrid());
   }
 }
