@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'grid.dart';
+import 'tiles.dart';
 
 void main() {
   runApp(const MyApp());
@@ -125,6 +125,6 @@ class _MyHomePageState extends State<MyHomePage> {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(debugShowCheckedModeBanner: false, home: MyGrid());
+    return MaterialApp(debugShowCheckedModeBanner: false, home: MyTiles());
   }
 }
