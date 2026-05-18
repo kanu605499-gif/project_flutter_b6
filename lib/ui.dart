@@ -348,8 +348,7 @@ class _MyGenderOpsiState extends State<MyGenderOpsi>
                   },
                   onLongPress: () {
                     setState(() {
-                      _anonCounter +=
-                          3; // Tahan lama buat nambah instan banyak (+5)
+                      _anonCounter += 3; //Generate per tap hold
                     });
                     print("Ditambah 3 via Hold");
                   },
@@ -398,7 +397,7 @@ class _MyGenderOpsiState extends State<MyGenderOpsi>
           ],
         ),
       ),
-      // Tetap ada di pojok bawah, bisa lu fungsikan buat aksi submit data nantinya
+
       floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
       floatingActionButton: FloatingActionButton(
         onPressed: () {
