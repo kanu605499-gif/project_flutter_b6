@@ -238,7 +238,7 @@ class _MyGenderOpsiState extends State<MyGenderOpsi>
               'CHOOSE YOUR AMOMUS AVATAR',
               textAlign: TextAlign.center,
               style: TextStyle(
-                fontSize: 13,
+                fontSize: 12,
                 fontWeight: FontWeight.bold,
                 color: Colors.black45,
                 letterSpacing: 1.2,
@@ -381,7 +381,6 @@ class _MyGenderOpsiState extends State<MyGenderOpsi>
                             fontWeight: FontWeight.bold,
                           ),
                         ),
-                        // Diganti ke icon counter dinamis / touch
                         const Icon(
                           Icons.touch_app_outlined,
                           color: Color(0xFF6200EE),
