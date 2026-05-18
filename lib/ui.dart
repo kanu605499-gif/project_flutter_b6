@@ -328,7 +328,6 @@ class _MyGenderOpsiState extends State<MyGenderOpsi>
             ),
             const SizedBox(height: 10),
 
-            // KOTAK KANAN TENGAH-BAWAH: Sekarang memegang kendali penuh atas Counter
             Align(
               alignment: Alignment.centerRight,
               child: Padding(
@@ -350,9 +349,9 @@ class _MyGenderOpsiState extends State<MyGenderOpsi>
                   onLongPress: () {
                     setState(() {
                       _anonCounter +=
-                          5; // Tahan lama buat nambah instan banyak (+5)
+                          3; // Tahan lama buat nambah instan banyak (+5)
                     });
-                    print("Ditambah 5 via Hold");
+                    print("Ditambah 3 via Hold");
                   },
                   child: Container(
                     width: 170,
