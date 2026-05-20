@@ -1,15 +1,21 @@
 import 'package:flutter/material.dart';
 
-// MyGenderOpsi
-class MyGenderOpsi extends StatefulWidget {
-  const MyGenderOpsi({super.key});
-
-  @override
-  State<MyGenderOpsi> createState() => _MyGenderOpsiState();
+void main() {
+  runApp(
+    const MaterialApp(debugShowCheckedModeBanner: false, home: AmomimusApp1()),
+  );
 }
 
-// _MyGenderOpsiState
-class _MyGenderOpsiState extends State<MyGenderOpsi>
+// MyGenderOpsi
+class AmomimusApp1 extends StatefulWidget {
+  const AmomimusApp1({super.key});
+
+  @override
+  State<AmomimusApp1> createState() => AmomimusApp1state();
+}
+
+// _Amomimusapp1state
+class AmomimusApp1state extends State<AmomimusApp1>
     with SingleTickerProviderStateMixin {
   bool _kataTersembunyi = false;
   bool _iconWarna = false;
@@ -45,15 +51,28 @@ class _MyGenderOpsiState extends State<MyGenderOpsi>
       backgroundColor: const Color(0xFFF8F9FA),
       // AppBar
       appBar: AppBar(
-        title: const Text(
-          'Create Your Amomim',
-          style: TextStyle(
-            color: Color.fromARGB(255, 0, 0, 0),
-            fontWeight: FontWeight.normal,
-          ),
-        ),
         backgroundColor: Colors.white,
         elevation: 1,
+        // BAGIAN TITLE SUDAH DIRAPIKAN DI SINI
+        title: RichText(
+          text: const TextSpan(
+            text: 'Create Your ',
+            style: TextStyle(
+              fontSize: 22,
+              fontWeight: FontWeight.bold,
+              color: Color(0xFF000000), // Warna hitam transparan/soft
+            ),
+            children: [
+              TextSpan(
+                text: 'Amomimus',
+                style: TextStyle(
+                  color: Color(0xff684ca3), // Warna ungu kustom kamu
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ],
+          ),
+        ),
         actions: [
           // IconButton
           IconButton(
@@ -101,10 +120,10 @@ class _MyGenderOpsiState extends State<MyGenderOpsi>
                 if (_kataTersembunyi) ...[
                   const SizedBox(width: 12),
                   const Text(
-                    'Welcome to register screen',
+                    'Register your Amomus avatar',
                     style: TextStyle(
                       fontWeight: FontWeight.w400,
-                      color: Colors.green,
+                      color: Color(0xFF6200EE),
                       fontSize: 15,
                     ),
                   ),
@@ -120,6 +139,10 @@ class _MyGenderOpsiState extends State<MyGenderOpsi>
                   !_isUsernameVisible, // Menyembunyikan teks sesuai state
               decoration: InputDecoration(
                 labelText: 'ANONYMOUS USERNAME',
+                labelStyle: const TextStyle(
+                  fontSize: 12,
+                  fontWeight: FontWeight.bold,
+                ),
                 hintText: 'Enter your username',
                 hintStyle: const TextStyle(color: Colors.grey, fontSize: 12),
                 filled: true,
@@ -156,7 +179,7 @@ class _MyGenderOpsiState extends State<MyGenderOpsi>
 
             // KOLOM DISPLAY RANDOM GENERATE NUMBER
             const Text(
-              'MATCHMAKING GENERATE NUMBER',
+              'AMOMIMUS ID GENERATOR',
               style: TextStyle(
                 fontSize: 11,
                 fontWeight: FontWeight.bold,
@@ -175,7 +198,7 @@ class _MyGenderOpsiState extends State<MyGenderOpsi>
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   const Text(
-                    'Random Generate Username:',
+                    'Random Generate ID:',
                     style: TextStyle(color: Colors.white70, fontSize: 14),
                   ),
                   Text(
@@ -225,7 +248,7 @@ class _MyGenderOpsiState extends State<MyGenderOpsi>
               const Padding(
                 padding: EdgeInsets.only(left: 8.0, bottom: 16.0),
                 child: Text(
-                  'Welcome to Amomimus! :D\nAmomimus is a catharthic medium that allows the user to surf with no use of real identity',
+                  'Welcome to Amomimus! :D\nAmomimus is a catharthic medium that allow the user to surf with no use of real identity',
                   style: TextStyle(
                     color: Colors.black54,
                     fontSize: 14,
@@ -236,13 +259,13 @@ class _MyGenderOpsiState extends State<MyGenderOpsi>
             const SizedBox(height: 20),
             const Text(
               'CHOOSE YOUR AMOMUS AVATAR',
-              textAlign: TextAlign.center,
               style: TextStyle(
                 fontSize: 12,
                 fontWeight: FontWeight.bold,
                 color: Colors.black45,
                 letterSpacing: 1.2,
               ),
+              textAlign: TextAlign.center,
             ),
             const SizedBox(height: 24),
 
@@ -252,7 +275,7 @@ class _MyGenderOpsiState extends State<MyGenderOpsi>
                 Align(
                   alignment: Alignment.centerLeft,
                   child: Padding(
-                    padding: const EdgeInsets.only(left: 20.0),
+                    padding: const EdgeInsets.only(left: 10.0),
                     child: AnimatedBuilder(
                       animation: _animationController,
                       builder: (context, child) {
@@ -265,7 +288,7 @@ class _MyGenderOpsiState extends State<MyGenderOpsi>
                         icon: Icons.diamond,
                         iconColor: const Color.fromARGB(255, 255, 255, 255),
                         bgColor: const Color(0xFFB388FF),
-                        label: 'Amo (Diamond)',
+                        label: 'Amo',
                       ),
                     ),
                   ),
@@ -287,14 +310,14 @@ class _MyGenderOpsiState extends State<MyGenderOpsi>
                       icon: Icons.android,
                       iconColor: const Color.fromARGB(255, 255, 255, 255),
                       bgColor: const Color(0xFFFFD54F),
-                      label: 'Amom (Robot)',
+                      label: 'Amom',
                     ),
                   ),
                 ),
                 Align(
                   alignment: Alignment.centerRight,
                   child: Padding(
-                    padding: const EdgeInsets.only(right: 20.0),
+                    padding: const EdgeInsets.only(right: 10.0),
                     child: AnimatedBuilder(
                       animation: _animationController,
                       builder: (context, child) {
@@ -307,7 +330,7 @@ class _MyGenderOpsiState extends State<MyGenderOpsi>
                         icon: Icons.water,
                         iconColor: const Color.fromARGB(255, 255, 255, 255),
                         bgColor: const Color(0xFFE0E0E0),
-                        label: 'Ami (Water)',
+                        label: 'Ami',
                       ),
                     ),
                   ),
@@ -329,7 +352,7 @@ class _MyGenderOpsiState extends State<MyGenderOpsi>
             const SizedBox(height: 10),
 
             Align(
-              alignment: Alignment.centerRight,
+              alignment: Alignment.center,
               child: Padding(
                 padding: const EdgeInsets.only(right: 8.0),
                 child: GestureDetector(

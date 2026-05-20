@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-
-import 'uii.dart';
+//import 'package:project_flutter_b6/uii.dart';
+import 'package:project_flutter_b6/login.dart';
 
 void main() {
   runApp(const MyApp());
@@ -126,6 +126,6 @@ class _MyHomePageState extends State<MyHomePage> {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(debugShowCheckedModeBanner: false, home: MyGenderOpsi());
+    return MaterialApp(debugShowCheckedModeBanner: false, home: AmomimusApp2());
   }
 }
