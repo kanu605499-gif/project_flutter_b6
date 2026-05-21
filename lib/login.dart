@@ -1,5 +1,7 @@
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:project_flutter_b6/secondlogin.dart';
+import 'package:project_flutter_b6/uii.dart';
 
 void main() {
   runApp(const AmomimusApp2());
@@ -62,6 +64,20 @@ class _LoginScreenState extends State<LoginScreen>
         });
       }
     });
+  }
+
+  void _navigateToRegister() {
+    Navigator.push(
+      context,
+      MaterialPageRoute(builder: (context) => const AmomimusApp1()),
+    );
+  }
+
+  void _navigateToSignUp() {
+    Navigator.push(
+      context,
+      MaterialPageRoute(builder: (context) => const AmomimusApp3()),
+    );
   }
 
   @override
@@ -192,9 +208,9 @@ class _LoginScreenState extends State<LoginScreen>
                               Icons.favorite,
                               color: Color(0xFFF44336),
                             ),
-                            onPressed: _triggerEasterEgg, //this line is updated
+                            onPressed: _triggerEasterEgg,
                           ),
-                          if (_showEasterEggBubble) //this line is updated
+                          if (_showEasterEggBubble)
                             Positioned(
                               top: 40,
                               right: 0,
@@ -233,15 +249,6 @@ class _LoginScreenState extends State<LoginScreen>
                     ],
                   ),
                   const SizedBox(height: 30),
-                  Align(
-                    alignment: Alignment.centerRight,
-                    child: Container(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 16,
-                        vertical: 10,
-                      ),
-                    ),
-                  ),
                   const SizedBox(height: 16),
                   Center(
                     child: RichText(
@@ -278,7 +285,6 @@ class _LoginScreenState extends State<LoginScreen>
                     ),
                   ),
                   const SizedBox(height: 40),
-
                   CustomInputField(
                     label: 'EMAIL',
                     hintText: 'name@example.com',
@@ -296,7 +302,6 @@ class _LoginScreenState extends State<LoginScreen>
                     },
                   ),
                   const SizedBox(height: 20),
-
                   CustomInputField(
                     label: 'PASSWORD',
                     hintText: '••••••••',
@@ -306,7 +311,7 @@ class _LoginScreenState extends State<LoginScreen>
                       icon: Icon(
                         _obscurePassword
                             ? Icons.visibility_off_outlined
-                            : Icons.visibility_off_outlined,
+                            : Icons.visibility_outlined,
                         color: Colors.grey[600],
                       ),
                       onPressed: () {
@@ -322,7 +327,8 @@ class _LoginScreenState extends State<LoginScreen>
                     width: double.infinity,
                     height: 54,
                     child: ElevatedButton(
-                      onPressed: () {},
+                      onPressed:
+                          _navigateToRegister, // Memanggil fungsi navigasi
                       style: ElevatedButton.styleFrom(
                         backgroundColor: const Color(0xff6c52a3),
                         shape: RoundedRectangleBorder(
@@ -340,6 +346,7 @@ class _LoginScreenState extends State<LoginScreen>
                       ),
                     ),
                   ),
+
                   const SizedBox(height: 24),
                   Row(
                     children: [
@@ -359,11 +366,13 @@ class _LoginScreenState extends State<LoginScreen>
                     ],
                   ),
                   const SizedBox(height: 24),
+
                   SizedBox(
                     width: double.infinity,
                     height: 54,
                     child: OutlinedButton(
-                      onPressed: () {},
+                      onPressed:
+                          _navigateToRegister, // Memanggil fungsi navigasi yang sama
                       style: OutlinedButton.styleFrom(
                         backgroundColor: const Color(0xFFFFD54F),
                         side: const BorderSide(color: Color(0xffeaeaea)),
@@ -401,6 +410,7 @@ class _LoginScreenState extends State<LoginScreen>
                       ),
                     ),
                   ),
+
                   const SizedBox(height: 21),
                   Center(
                     child: RichText(
@@ -418,9 +428,7 @@ class _LoginScreenState extends State<LoginScreen>
                               fontWeight: FontWeight.bold,
                             ),
                             recognizer: TapGestureRecognizer()
-                              ..onTap = () {
-                                print("Tombol Sign up ditekan!");
-                              },
+                              ..onTap = _navigateToSignUp, // Sign Up
                           ),
                         ],
                       ),
@@ -500,12 +508,12 @@ class CustomInputField extends StatelessWidget {
           onChanged: onChanged,
           decoration: InputDecoration(
             labelText: label.toLowerCase().contains('password')
-                ? 'Input your password here'
-                : 'Input your email here',
+                ? 'Input Your Password Here'
+                : 'Input Your Email Here',
             labelStyle: TextStyle(fontSize: 14, color: Colors.grey[500]),
             floatingLabelStyle: const TextStyle(
               fontSize: 12,
-              color: Color.fromRGBO(218, 162, 9, 1),
+              color: Color(0xFF6200EE),
             ),
             errorText: errorText,
             errorStyle: const TextStyle(
