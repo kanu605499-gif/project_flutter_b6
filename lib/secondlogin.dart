@@ -96,7 +96,7 @@ class _AmomimusApp3State extends State<AmomimusApp3>
                 );
               },
               child: _buildFloatingBox(
-                const Color.fromARGB(255, 248, 248, 248),
+                const Color(0xFFF8F8F8),
                 Icons.water_outlined,
                 const Color(0xFFE0E0E0),
               ),
