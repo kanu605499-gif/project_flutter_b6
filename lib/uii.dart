@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:project_flutter_b6/tugas9ui.dart';
 
 void main() {
   runApp(
@@ -101,7 +102,6 @@ class AmomimusApp1state extends State<AmomimusApp1>
               ),
               const SizedBox(height: 16),
 
-              // KOLOM USERNAME DENGAN FITUR VISIBILITY ON/OFF
               TextField(
                 controller: _usernameController,
                 obscureText:
@@ -404,12 +404,19 @@ class AmomimusApp1state extends State<AmomimusApp1>
       floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
       floatingActionButton: FloatingActionButton(
         onPressed: () {
-          print("Submit Form data Amomim!");
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => AmomimusApp5()),
+          );
         },
-        backgroundColor: const Color(0xFF6200EE),
+        backgroundColor: const Color(0xFF8C72C4),
         elevation: 6,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-        child: const Icon(Icons.arrow_forward, color: Colors.white, size: 28),
+        child: const Icon(
+          Icons.keyboard_arrow_right_outlined,
+          color: Colors.white,
+          size: 35,
+        ),
       ),
     );
   }

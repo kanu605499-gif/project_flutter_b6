@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:project_flutter_b6/tugas9ui.dart';
 
 class AmomimusApp4 extends StatefulWidget {
   const AmomimusApp4({super.key});
@@ -621,7 +622,12 @@ class _AmomimusFormPageState extends State<AmomimusFormPage>
                       child: ElevatedButton(
                         onPressed: _hasAcceptedTerms
                             ? () {
-                                print("Gas Aplikasi!");
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => AmomimusApp5(),
+                                  ),
+                                );
                               }
                             : null,
                         style: ElevatedButton.styleFrom(
