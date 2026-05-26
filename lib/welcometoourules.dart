@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:project_flutter_b6/tugas9ui.dart';
+import 'package:project_flutter_b6/uii.dart';
 
 class AmomimusApp4 extends StatefulWidget {
   const AmomimusApp4({super.key});
@@ -55,7 +55,7 @@ class _AmomimusApp4State extends State<AmomimusApp4> {
             style: TextStyle(
               color: mainTextColor,
               fontWeight: FontWeight.bold,
-              fontSize: 18,
+              fontSize: 19,
               fontFamily: 'Sans-Serif',
             ),
             children: [
@@ -625,7 +625,7 @@ class _AmomimusFormPageState extends State<AmomimusFormPage>
                                 Navigator.push(
                                   context,
                                   MaterialPageRoute(
-                                    builder: (context) => AmomimusApp5(),
+                                    builder: (context) => AmomimusApp1(),
                                   ),
                                 );
                               }
