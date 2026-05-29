@@ -35,7 +35,6 @@ class FeedModel {
   static List<FeedModel> generateDummyData() {
     final Random random = Random();
 
-    // Data unik untuk menghindari duplikasi
     final List<String> amoNames = [
       "Midnight Chaser",
       "Star Gazing",

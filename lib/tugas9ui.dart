@@ -2,6 +2,9 @@ import 'dart:math';
 import 'dart:ui';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:project_flutter_b6/login.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import 'amomimusdark.dart';
 import 'tugas9model.dart';
@@ -26,7 +29,11 @@ class _AmomimusApp5State extends State<AmomimusApp5>
   @override
   void initState() {
     super.initState();
-    feedData = FeedModel.generateDummyData();
+    try {
+      feedData = FeedModel.generateDummyData();
+    } catch (e) {
+      feedData = [];
+    }
 
     _animationController = AnimationController(
       vsync: this,
@@ -52,7 +59,22 @@ class _AmomimusApp5State extends State<AmomimusApp5>
   }
 
   void _summonPostSheet(BuildContext context, bool isDark) {
-    final userProfile = feedData.firstWhere((f) => f.type == AccountType.user);
+    final userProfile = feedData.firstWhere(
+      (f) => f.type == AccountType.user,
+      orElse: () => FeedModel(
+        id: "#YOU-000",
+        userName: "User",
+        type: AccountType.user,
+        content: "",
+        timeStamp: "",
+        iconData: Icons.person,
+        themeColor: Colors.purple,
+        contentTextStyle: const TextStyle(),
+        idTextStyle: const TextStyle(),
+        resonateCount: 0,
+        commentCount: 0,
+      ),
+    );
 
     showModalBottomSheet(
       context: context,
@@ -71,13 +93,6 @@ class _AmomimusApp5State extends State<AmomimusApp5>
                 topLeft: Radius.circular(30),
                 topRight: Radius.circular(30),
               ),
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.black.withOpacity(0.15),
-                  blurRadius: 10,
-                  offset: const Offset(0, -2),
-                ),
-              ],
             ),
             padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
             child: SingleChildScrollView(
@@ -100,7 +115,7 @@ class _AmomimusApp5State extends State<AmomimusApp5>
                       fontWeight: FontWeight.bold,
                       color: isDark
                           ? AmomimusDarkTheme.textPrimary
-                          : Colors.black,
+                          : const Color.fromARGB(255, 140, 113, 199),
                     ),
                   ),
                   const SizedBox(height: 16),
@@ -185,7 +200,22 @@ class _AmomimusApp5State extends State<AmomimusApp5>
 
   @override
   Widget build(BuildContext context) {
-    final userProfile = feedData.firstWhere((f) => f.type == AccountType.user);
+    final userProfile = feedData.firstWhere(
+      (f) => f.type == AccountType.user,
+      orElse: () => FeedModel(
+        id: "#YOU-000",
+        userName: "User",
+        type: AccountType.user,
+        content: "",
+        timeStamp: "",
+        iconData: Icons.person,
+        themeColor: Colors.purple,
+        contentTextStyle: const TextStyle(),
+        idTextStyle: const TextStyle(),
+        resonateCount: 0,
+        commentCount: 0,
+      ),
+    );
     final isDark = _isDarkModeLocal;
 
     return Theme(
@@ -196,312 +226,357 @@ class _AmomimusApp5State extends State<AmomimusApp5>
               ? AmomimusDarkTheme.backgroundDark
               : Colors.grey[50]!;
 
-          return Scaffold(
-            backgroundColor: currentScaffoldBg,
-            body: Stack(
-              children: [
-                Positioned(
-                  left: 0,
-                  right: 0,
-                  bottom: 80,
-                  child: AnimatedBuilder(
-                    animation: _waveController,
-                    builder: (context, child) {
-                      return SizedBox(
-                        height: 110,
-                        child: Stack(
-                          children: [
-                            Opacity(
-                              opacity: 0.3,
-                              child: ClipPath(
-                                clipper: AmomimusWaveClipper(
-                                  _waveController.value,
-                                  0.0,
-                                ),
-                                child: Container(
-                                  color: isDark
-                                      ? const Color.fromARGB(255, 255, 187, 0)
-                                      : AmomimusDarkTheme.primaryPurple,
+          return AnnotatedRegion<SystemUiOverlayStyle>(
+            value: SystemUiOverlayStyle(
+              statusBarColor: Colors.transparent,
+              statusBarIconBrightness: isDark
+                  ? Brightness.light
+                  : Brightness.dark,
+              statusBarBrightness: isDark ? Brightness.dark : Brightness.light,
+              systemNavigationBarColor: isDark
+                  ? AmomimusDarkTheme.surfaceDark
+                  : Colors.white,
+              systemNavigationBarIconBrightness: isDark
+                  ? Brightness.light
+                  : Brightness.dark,
+            ),
+            child: Scaffold(
+              backgroundColor: currentScaffoldBg,
+              body: Stack(
+                children: [
+                  Positioned(
+                    left: 0,
+                    right: 0,
+                    bottom: 80,
+                    child: AnimatedBuilder(
+                      animation: _waveController,
+                      builder: (context, child) {
+                        return SizedBox(
+                          height: 110,
+                          child: Stack(
+                            children: [
+                              Opacity(
+                                opacity: 0.3,
+                                child: ClipPath(
+                                  clipper: AmomimusWaveClipper(
+                                    _waveController.value,
+                                    0.0,
+                                  ),
+                                  child: Container(
+                                    color: isDark
+                                        ? const Color.fromARGB(255, 255, 187, 0)
+                                        : AmomimusDarkTheme.primaryPurple,
+                                  ),
                                 ),
                               ),
-                            ),
-                            Opacity(
-                              opacity: 0.8,
-                              child: ClipPath(
-                                clipper: AmomimusWaveClipper(
-                                  _waveController.value,
-                                  0.6,
-                                ),
-                                child: Container(
-                                  color: isDark
-                                      ? AmomimusDarkTheme.policeLineYellow
-                                      : AmomimusDarkTheme.primaryPurple,
+                              Opacity(
+                                opacity: 0.8,
+                                child: ClipPath(
+                                  clipper: AmomimusWaveClipper(
+                                    _waveController.value,
+                                    0.6,
+                                  ),
+                                  child: Container(
+                                    color: isDark
+                                        ? AmomimusDarkTheme.policeLineYellow
+                                        : AmomimusDarkTheme.primaryPurple,
+                                  ),
                                 ),
                               ),
-                            ),
-                          ],
-                        ),
-                      );
-                    },
-                  ),
-                ),
-                Positioned.fill(
-                  child: ListView.builder(
-                    padding: const EdgeInsets.only(top: 95, bottom: 120),
-                    itemCount: feedData.length,
-                    itemBuilder: (context, index) =>
-                        FeedCard(model: feedData[index]),
-                  ),
-                ),
-                Positioned(
-                  top: 0,
-                  left: 0,
-                  right: 0,
-                  child: Container(
-                    height: 90,
-                    padding: const EdgeInsets.only(
-                      top: 30,
-                      right: 16,
-                      left: 16,
-                    ),
-                    color: currentScaffoldBg.withOpacity(0.9),
-                    child: Row(
-                      children: [
-                        Builder(
-                          builder: (scaffoldContext) {
-                            return IconButton(
-                              icon: Icon(
-                                Icons.menu,
-                                color: isDark
-                                    ? AmomimusDarkTheme.textPrimary
-                                    : Colors.black,
-                              ),
-                              onPressed: () =>
-                                  Scaffold.of(scaffoldContext).openDrawer(),
-                            );
-                          },
-                        ),
-                        const SizedBox(width: 8),
-                        GestureDetector(
-                          onTap: () {
-                            setState(() {
-                              _isDarkModeLocal = !_isDarkModeLocal;
-                            });
-                          },
-                          child: const Text(
-                            "Amomimus",
-                            style: TextStyle(
-                              fontSize: 24,
-                              fontWeight: FontWeight.bold,
-                              color: AmomimusDarkTheme.primaryPurple,
-                            ),
+                            ],
                           ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-                Positioned(
-                  bottom: 0,
-                  left: 0,
-                  right: 0,
-                  child: Container(
-                    height: 80,
-                    decoration: BoxDecoration(
-                      color: isDark
-                          ? AmomimusDarkTheme.surfaceDark
-                          : Colors.white,
-                      boxShadow: [
-                        BoxShadow(
-                          color: Colors.black.withOpacity(0.05),
-                          blurRadius: 10,
-                          offset: const Offset(0, -2),
-                        ),
-                      ],
-                    ),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceAround,
-                      children: [
-                        IconButton(
-                          icon: Icon(
-                            Icons.messenger_outline,
-                            color: isDark
-                                ? AmomimusDarkTheme.policeLineYellow
-                                : AmomimusDarkTheme.primaryPurple,
-                          ),
-                          onPressed: () {},
-                        ),
-                        const SizedBox(width: 60),
-                        IconButton(
-                          icon: Icon(
-                            Icons.person_outline,
-                            color: isDark
-                                ? AmomimusDarkTheme.policeLineYellow
-                                : AmomimusDarkTheme.primaryPurple,
-                          ),
-                          onPressed: () {},
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-                Positioned(
-                  bottom: 40,
-                  left: 0,
-                  right: 0,
-                  child: Align(
-                    alignment: Alignment.bottomCenter,
-                    child: GestureDetector(
-                      onVerticalDragUpdate: (details) {
-                        if (details.primaryDelta! < -7) {
-                          _summonPostSheet(context, isDark);
-                        }
+                        );
                       },
-                      child: AnimatedBuilder(
-                        animation: _animation,
-                        builder: (context, child) => Transform.translate(
-                          offset: Offset(0, -_animation.value),
-                          child: child,
-                        ),
-                        child: SizedBox(
-                          width: 60,
-                          height: 60,
-                          child: FloatingActionButton(
-                            onPressed: () => _summonPostSheet(context, isDark),
-                            backgroundColor: isDark
-                                ? const Color(0xFF8C72C4)
-                                : AmomimusDarkTheme.policeLineYellow,
-                            shape: const CircleBorder(),
-                            elevation: 6,
-                            child: Icon(
-                              Icons.keyboard_arrow_up_outlined,
+                    ),
+                  ),
+                  Positioned.fill(
+                    child: feedData.isEmpty
+                        ? const Center(child: Text("No feeds available."))
+                        : ListView.builder(
+                            padding: const EdgeInsets.only(
+                              top: 95,
+                              bottom: 120,
+                            ),
+                            itemCount: feedData.length,
+                            itemBuilder: (context, index) =>
+                                FeedCard(model: feedData[index]),
+                          ),
+                  ),
+                  Positioned(
+                    top: 0,
+                    left: 0,
+                    right: 0,
+                    child: Container(
+                      height: 90,
+                      padding: const EdgeInsets.only(
+                        top: 30,
+                        right: 16,
+                        left: 16,
+                      ),
+                      color: currentScaffoldBg.withOpacity(0.9),
+                      child: Row(
+                        children: [
+                          Builder(
+                            builder: (scaffoldContext) {
+                              return IconButton(
+                                icon: Icon(
+                                  Icons.menu,
+                                  color: isDark
+                                      ? AmomimusDarkTheme.textPrimary
+                                      : Colors.black,
+                                ),
+                                onPressed: () =>
+                                    Scaffold.of(scaffoldContext).openDrawer(),
+                              );
+                            },
+                          ),
+                          const SizedBox(width: 8),
+                          GestureDetector(
+                            onTap: () {
+                              setState(() {
+                                _isDarkModeLocal = !_isDarkModeLocal;
+                              });
+                            },
+                            child: const Text(
+                              "Amomimus",
+                              style: TextStyle(
+                                fontSize: 24,
+                                fontWeight: FontWeight.bold,
+                                color: AmomimusDarkTheme.primaryPurple,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                  Positioned(
+                    bottom: 0,
+                    left: 0,
+                    right: 0,
+                    child: Container(
+                      height: 80,
+                      decoration: BoxDecoration(
+                        color: isDark
+                            ? AmomimusDarkTheme.surfaceDark
+                            : Colors.white,
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.black.withOpacity(0.05),
+                            blurRadius: 10,
+                            offset: const Offset(0, -2),
+                          ),
+                        ],
+                      ),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceAround,
+                        children: [
+                          IconButton(
+                            icon: Icon(
+                              Icons.messenger_outline,
                               color: isDark
                                   ? AmomimusDarkTheme.policeLineYellow
                                   : AmomimusDarkTheme.primaryPurple,
-                              size: 35,
+                            ),
+                            onPressed: () {},
+                          ),
+                          const SizedBox(width: 60),
+                          IconButton(
+                            icon: Icon(
+                              Icons.person_outline,
+                              color: isDark
+                                  ? AmomimusDarkTheme.policeLineYellow
+                                  : AmomimusDarkTheme.primaryPurple,
+                            ),
+                            onPressed: () {},
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                  Positioned(
+                    bottom: 40,
+                    left: 0,
+                    right: 0,
+                    child: Align(
+                      alignment: Alignment.bottomCenter,
+                      child: GestureDetector(
+                        onVerticalDragUpdate: (details) {
+                          if (details.primaryDelta! < -7) {
+                            _summonPostSheet(context, isDark);
+                          }
+                        },
+                        child: AnimatedBuilder(
+                          animation: _animation,
+                          builder: (context, child) => Transform.translate(
+                            offset: Offset(0, -_animation.value),
+                            child: child,
+                          ),
+                          child: SizedBox(
+                            width: 63,
+                            height: 63,
+                            child: FloatingActionButton(
+                              onPressed: () =>
+                                  _summonPostSheet(context, isDark),
+                              backgroundColor: isDark
+                                  ? const Color(0xFF8C72C4)
+                                  : AmomimusDarkTheme.policeLineYellow,
+                              shape: const CircleBorder(),
+                              elevation: 6,
+                              child: Icon(
+                                Icons.keyboard_arrow_up_rounded,
+                                color: isDark
+                                    ? AmomimusDarkTheme.policeLineYellow
+                                    : AmomimusDarkTheme.primaryPurple,
+                                size: 49,
+                              ),
                             ),
                           ),
                         ),
                       ),
                     ),
                   ),
-                ),
-              ],
-            ),
-            drawer: Drawer(
-              width: MediaQuery.of(context).size.width * 0.7,
-              backgroundColor: isDark
-                  ? AmomimusDarkTheme.backgroundDark
-                  : Colors.white,
-              child: Column(
-                children: [
-                  Material(
-                    color: AmomimusDarkTheme.primaryPurple,
-                    child: InkWell(
-                      onTap: () {},
-                      child: Container(
-                        width: double.infinity,
-                        padding: const EdgeInsets.fromLTRB(24, 70, 24, 30),
-                        child: Column(
-                          children: [
-                            ClipRRect(
-                              borderRadius: BorderRadius.circular(16),
-                              child: Container(
-                                width: 80,
-                                height: 80,
-                                color: Colors.white,
-                                child: const Icon(
-                                  Icons.person,
-                                  size: 50,
-                                  color: AmomimusDarkTheme.primaryPurple,
+                ],
+              ),
+              drawer: Drawer(
+                width: MediaQuery.of(context).size.width * 0.7,
+                backgroundColor: isDark
+                    ? AmomimusDarkTheme.backgroundDark
+                    : Colors.white,
+                child: Column(
+                  children: [
+                    Material(
+                      color: AmomimusDarkTheme.primaryPurple,
+                      child: InkWell(
+                        onTap: () {},
+                        child: Container(
+                          width: double.infinity,
+                          padding: const EdgeInsets.fromLTRB(24, 70, 24, 30),
+                          child: Column(
+                            children: [
+                              ClipRRect(
+                                borderRadius: BorderRadius.circular(16),
+                                child: Container(
+                                  width: 80,
+                                  height: 80,
+                                  color: Colors.white,
+                                  child: const Icon(
+                                    Icons.person,
+                                    size: 50,
+                                    color: AmomimusDarkTheme.primaryPurple,
+                                  ),
                                 ),
                               ),
-                            ),
-                            const SizedBox(height: 16),
-                            Text(
-                              userProfile.userName,
-                              style: const TextStyle(
-                                color: Colors.white,
-                                fontSize: 18,
-                                fontWeight: FontWeight.bold,
+                              const SizedBox(height: 16),
+                              Text(
+                                userProfile.userName,
+                                style: const TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 18,
+                                  fontWeight: FontWeight.bold,
+                                ),
                               ),
-                            ),
-                            const SizedBox(height: 4),
-                            Text(
-                              userProfile.id,
-                              style: const TextStyle(
-                                color: Colors.white70,
-                                fontSize: 14,
+                              const SizedBox(height: 4),
+                              Text(
+                                userProfile.id,
+                                style: const TextStyle(
+                                  color: Colors.white70,
+                                  fontSize: 14,
+                                ),
                               ),
-                            ),
-                          ],
+                            ],
+                          ),
                         ),
                       ),
                     ),
-                  ),
-                  ListTile(
-                    leading: Icon(
-                      Icons.help_outline,
-                      color: isDark
-                          ? AmomimusDarkTheme.textSecondary
-                          : Colors.grey,
-                    ),
-                    title: Text(
-                      "App Documentation",
-                      style: TextStyle(
+                    ListTile(
+                      leading: Icon(
+                        Icons.help_outline,
                         color: isDark
-                            ? AmomimusDarkTheme.textPrimary
-                            : Colors.black,
+                            ? AmomimusDarkTheme.textSecondary
+                            : Colors.grey,
                       ),
+                      title: Text(
+                        "App Documentation",
+                        style: TextStyle(
+                          color: isDark
+                              ? AmomimusDarkTheme.textPrimary
+                              : Colors.black,
+                        ),
+                      ),
+                      onTap: () {},
                     ),
-                    onTap: () {},
-                  ),
-                  ListTile(
-                    leading: Icon(
-                      Icons.bug_report_outlined,
-                      color: isDark
-                          ? AmomimusDarkTheme.textSecondary
-                          : Colors.grey,
-                    ),
-                    title: Text(
-                      "Report a Bug",
-                      style: TextStyle(
+                    ListTile(
+                      leading: Icon(
+                        Icons.bug_report_outlined,
                         color: isDark
-                            ? AmomimusDarkTheme.textPrimary
-                            : Colors.black,
+                            ? AmomimusDarkTheme.textSecondary
+                            : Colors.grey,
                       ),
+                      title: Text(
+                        "Report a Bug",
+                        style: TextStyle(
+                          color: isDark
+                              ? AmomimusDarkTheme.textPrimary
+                              : Colors.black,
+                        ),
+                      ),
+                      onTap: () {},
                     ),
-                    onTap: () {},
-                  ),
-                  ListTile(
-                    leading: Icon(
-                      Icons.contact_mail_outlined,
-                      color: isDark
-                          ? AmomimusDarkTheme.textSecondary
-                          : Colors.grey,
-                    ),
-                    title: Text(
-                      "Contact Developers",
-                      style: TextStyle(
+                    ListTile(
+                      leading: Icon(
+                        Icons.contact_mail_outlined,
                         color: isDark
-                            ? AmomimusDarkTheme.textPrimary
-                            : Colors.black,
+                            ? AmomimusDarkTheme.textSecondary
+                            : Colors.grey,
                       ),
+                      title: Text(
+                        "Contact Developers",
+                        style: TextStyle(
+                          color: isDark
+                              ? AmomimusDarkTheme.textPrimary
+                              : Colors.black,
+                        ),
+                      ),
+                      onTap: () {},
                     ),
-                    onTap: () {},
-                  ),
-                  const Spacer(),
-                  const Divider(),
-                  ListTile(
-                    leading: const Icon(Icons.logout, color: Colors.red),
-                    title: const Text(
-                      "Exit Session",
-                      style: TextStyle(color: Colors.red),
+                    const Spacer(),
+                    const Divider(),
+                    ListTile(
+                      leading: const Icon(Icons.logout, color: Colors.red),
+                      title: const Text(
+                        "Exit Session",
+                        style: TextStyle(color: Colors.red),
+                      ),
+                      onTap: () async {
+                        showDialog(
+                          context: context,
+                          barrierDismissible: false,
+                          builder: (context) => const Center(
+                            child: CircularProgressIndicator(color: Colors.red),
+                          ),
+                        );
+
+                        final prefs = await SharedPreferences.getInstance();
+                        await prefs.setBool('isLoggedin', false);
+
+                        if (!context.mounted) return;
+
+                        Navigator.of(context, rootNavigator: true).pop();
+
+                        if (context.mounted) {
+                          Navigator.of(context).pushAndRemoveUntil(
+                            MaterialPageRoute(
+                              builder: (context) => const AmomimusApp2(),
+                            ),
+                            (route) => false,
+                          );
+                        }
+                      },
                     ),
-                    onTap: () {},
-                  ),
-                  const SizedBox(height: 20),
-                ],
+                    const SizedBox(height: 20),
+                  ],
+                ),
               ),
             ),
           );
@@ -576,13 +651,6 @@ class _FeedCardState extends State<FeedCard> {
                     color: AmomimusDarkTheme.primaryPurple,
                     width: 1.5,
                   ),
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.black.withOpacity(0.03),
-                      blurRadius: 10,
-                      offset: const Offset(0, 4),
-                    ),
-                  ],
                 ),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,

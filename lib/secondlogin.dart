@@ -2,7 +2,8 @@ import 'dart:math' as math;
 
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
-import 'package:project_flutter_b6/welcometoourules.dart';
+
+import 'welcometoourules.dart';
 
 class AmomimusApp3 extends StatefulWidget {
   const AmomimusApp3({super.key});
@@ -131,7 +132,7 @@ class _AmomimusApp3State extends State<AmomimusApp3>
                       TextButton(
                         onPressed: () => Navigator.pop(dialogContext),
                         child: const Text(
-                          'Decline',
+                          'Batal',
                           style: TextStyle(
                             color: Color(0xff9e9bc2),
                             fontWeight: FontWeight.w600,
@@ -142,7 +143,7 @@ class _AmomimusApp3State extends State<AmomimusApp3>
                       ElevatedButton(
                         style: ElevatedButton.styleFrom(
                           backgroundColor: const Color(0xFFFFD54F),
-                          foregroundColor: const Color(0xff684ca3),
+                          foregroundColor: const Color(0xff121212),
                           padding: const EdgeInsets.symmetric(
                             horizontal: 32,
                             vertical: 14,
@@ -157,7 +158,7 @@ class _AmomimusApp3State extends State<AmomimusApp3>
                           _showSuccessDialog();
                         },
                         child: const Text(
-                          'Verify your data?',
+                          'Lanjut',
                           style: TextStyle(fontWeight: FontWeight.w700),
                         ),
                       ),
@@ -200,7 +201,7 @@ class _AmomimusApp3State extends State<AmomimusApp3>
                 children: [
                   RichText(
                     text: const TextSpan(
-                      text: 'Succesfully ',
+                      text: 'Registrasi ',
                       style: TextStyle(
                         fontSize: 24,
                         fontWeight: FontWeight.w700,
@@ -209,7 +210,7 @@ class _AmomimusApp3State extends State<AmomimusApp3>
                       ),
                       children: [
                         TextSpan(
-                          text: 'Registered',
+                          text: 'Berhasil',
                           style: TextStyle(
                             color: Color(0xFFFFD54F),
                             fontWeight: FontWeight.w800,
@@ -231,7 +232,7 @@ class _AmomimusApp3State extends State<AmomimusApp3>
                         RichText(
                           textAlign: TextAlign.center,
                           text: TextSpan(
-                            text: 'Thank you ',
+                            text: 'Terima kasih ',
                             style: const TextStyle(
                               fontSize: 15,
                               color: Color(0xff9e9bc2),
@@ -247,7 +248,7 @@ class _AmomimusApp3State extends State<AmomimusApp3>
                                 ),
                               ),
                               const TextSpan(
-                                text: ',\nYou already registered.',
+                                text: ',\nKamu telah terdaftar di sistem kami.',
                               ),
                             ],
                           ),
@@ -277,12 +278,15 @@ class _AmomimusApp3State extends State<AmomimusApp3>
                           Navigator.push(
                             context,
                             MaterialPageRoute(
-                              builder: (context) => const AmomimusApp4(),
+                              builder: (context) => AmomimusApp4(
+                                nama: _nameController.text,
+                                karakter: _cityController.text,
+                              ),
                             ),
                           );
                         },
                         child: const Text(
-                          'Term and Conditions',
+                          'Lanjut',
                           style: TextStyle(fontWeight: FontWeight.w700),
                         ),
                       ),
@@ -476,11 +480,11 @@ class _AmomimusApp3State extends State<AmomimusApp3>
                           children: [
                             Image.asset(
                               'assets/images/Social_Icons.png',
-                              width: 21,
-                              height: 21,
+                              width: 24,
+                              height: 24,
                             ),
-                            const SizedBox(width: 12),
-                            const Text(
+                            SizedBox(width: 12),
+                            Text(
                               'Sign up with Google',
                               style: TextStyle(
                                 color: Color(0xff121212),

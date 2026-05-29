@@ -109,6 +109,7 @@ class AmomimusApp1state extends State<AmomimusApp1>
                 decoration: InputDecoration(
                   labelText: 'ANONYMOUS USERNAME',
                   labelStyle: const TextStyle(
+                    color: Color(0xff6c52a3),
                     fontSize: 12,
                     fontWeight: FontWeight.bold,
                   ),
@@ -120,7 +121,7 @@ class AmomimusApp1state extends State<AmomimusApp1>
                     horizontal: 16,
                     vertical: 16,
                   ),
-                  // Icon mata on/off di pojok kanan dalam textfield
+
                   suffixIcon: IconButton(
                     icon: Icon(
                       _isUsernameVisible

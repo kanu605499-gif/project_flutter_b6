@@ -1,7 +1,10 @@
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
-import 'package:project_flutter_b6/tugas10.dart';
-import 'package:project_flutter_b6/uii.dart';
+import 'package:project_flutter_b6/secondlogin.dart';
+import 'package:project_flutter_b6/tugas11a.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+
+import 'database/preference_handler.dart';
 
 void main() {
   runApp(const AmomimusApp2());
@@ -33,7 +36,10 @@ class LoginScreen extends StatefulWidget {
 class _LoginScreenState extends State<LoginScreen>
     with SingleTickerProviderStateMixin {
   late final AnimationController _floatingController;
+  final TextEditingController _emailController = TextEditingController();
+  final TextEditingController _passwordController = TextEditingController();
   bool _obscurePassword = true;
+  bool _rememberMe = false;
   String? _emailErrorMsg;
   bool _showEasterEggBubble = false;
 
@@ -44,11 +50,38 @@ class _LoginScreenState extends State<LoginScreen>
       duration: const Duration(milliseconds: 1500),
       vsync: this,
     )..repeat(reverse: true);
+    _loadSavedPreferences();
+  }
+
+  Future<void> _loadSavedPreferences() async {
+    final prefs = await SharedPreferences.getInstance();
+    if (!mounted) return;
+
+    setState(() {
+      _emailController.text = prefs.getString('savedEmail') ?? '';
+      _rememberMe = prefs.getBool('rememberMe') ?? false;
+    });
+  }
+
+  Future<void> _saveLoginPreferences() async {
+    await PreferenceHandler.setLogin(true);
+    final prefs = await SharedPreferences.getInstance();
+
+    if (_rememberMe) {
+      await prefs.setString('savedEmail', _emailController.text.trim());
+    } else {
+      await prefs.remove('savedEmail');
+    }
+
+    await prefs.setBool('rememberMe', _rememberMe);
+    await prefs.setBool('isLoggedIn', true);
   }
 
   @override
   void dispose() {
     _floatingController.dispose();
+    _emailController.dispose();
+    _passwordController.dispose();
     super.dispose();
   }
 
@@ -66,10 +99,22 @@ class _LoginScreenState extends State<LoginScreen>
     });
   }
 
-  void _navigateToRegister() {
-    Navigator.push(
+  Future<void> _handleLogin() async {
+    if (_emailErrorMsg != null || _emailController.text.isEmpty) {
+      setState(() {
+        _emailErrorMsg = _emailController.text.isEmpty
+            ? 'Email cannot be empty'
+            : _emailErrorMsg;
+      });
+      return;
+    }
+
+    await _saveLoginPreferences();
+    if (!mounted) return;
+
+    Navigator.pushReplacement(
       context,
-      MaterialPageRoute(builder: (context) => const AmomimusApp1()),
+      MaterialPageRoute(builder: (context) => const SplashScreen()),
     );
   }
 
@@ -79,6 +124,8 @@ class _LoginScreenState extends State<LoginScreen>
       MaterialPageRoute(builder: (context) => const AmomimusApp3()),
     );
   }
+
+  void _handleGoogleLogin() {}
 
   @override
   Widget build(BuildContext context) {
@@ -249,7 +296,6 @@ class _LoginScreenState extends State<LoginScreen>
                     ],
                   ),
                   const SizedBox(height: 30),
-                  const SizedBox(height: 16),
                   Center(
                     child: RichText(
                       textAlign: TextAlign.center,
@@ -276,7 +322,7 @@ class _LoginScreenState extends State<LoginScreen>
                       textAlign: TextAlign.center,
                       text: const TextSpan(
                         text:
-                            'Amomimus is a chatarthic medium that allow the user to surf with no need of real identity',
+                            'Amomimus is a cathartic medium that allows users to surf with no need for a real identity',
                         style: TextStyle(
                           fontSize: 15,
                           color: Color.fromARGB(255, 134, 134, 134),
@@ -288,6 +334,7 @@ class _LoginScreenState extends State<LoginScreen>
                   CustomInputField(
                     label: 'EMAIL',
                     hintText: 'name@example.com',
+                    controller: _emailController,
                     errorText: _emailErrorMsg,
                     onChanged: (value) {
                       setState(() {
@@ -305,6 +352,7 @@ class _LoginScreenState extends State<LoginScreen>
                   CustomInputField(
                     label: 'PASSWORD',
                     hintText: '••••••••',
+                    controller: _passwordController,
                     errorText: null,
                     obscureText: _obscurePassword,
                     suffixIcon: IconButton(
@@ -321,14 +369,25 @@ class _LoginScreenState extends State<LoginScreen>
                       },
                     ),
                   ),
-                  const SizedBox(height: 30),
-
+                  const SizedBox(height: 12),
+                  CheckboxListTile(
+                    contentPadding: EdgeInsets.zero,
+                    value: _rememberMe,
+                    onChanged: (value) {
+                      setState(() {
+                        _rememberMe = value ?? false;
+                      });
+                    },
+                    title: const Text('Remember me'),
+                    activeColor: const Color(0xff6c52a3),
+                    controlAffinity: ListTileControlAffinity.leading,
+                  ),
+                  const SizedBox(height: 18),
                   SizedBox(
                     width: double.infinity,
                     height: 54,
                     child: ElevatedButton(
-                      onPressed:
-                          _navigateToRegister, // Memanggil fungsi navigasi
+                      onPressed: _handleLogin,
                       style: ElevatedButton.styleFrom(
                         backgroundColor: const Color(0xff6c52a3),
                         shape: RoundedRectangleBorder(
@@ -346,7 +405,6 @@ class _LoginScreenState extends State<LoginScreen>
                       ),
                     ),
                   ),
-
                   const SizedBox(height: 24),
                   Row(
                     children: [
@@ -366,13 +424,11 @@ class _LoginScreenState extends State<LoginScreen>
                     ],
                   ),
                   const SizedBox(height: 24),
-
                   SizedBox(
                     width: double.infinity,
                     height: 54,
                     child: OutlinedButton(
-                      onPressed:
-                          _navigateToRegister, // Memanggil fungsi navigasi yang sama
+                      onPressed: _handleGoogleLogin,
                       style: OutlinedButton.styleFrom(
                         backgroundColor: const Color(0xFFFFD54F),
                         side: const BorderSide(color: Color(0xffeaeaea)),
@@ -394,6 +450,12 @@ class _LoginScreenState extends State<LoginScreen>
                             child: Center(
                               child: Image.asset(
                                 'assets/images/Social_Icons.png',
+                                errorBuilder: (context, error, stackTrace) {
+                                  return const Icon(
+                                    Icons.g_mobiledata,
+                                    color: Color(0xff121212),
+                                  );
+                                },
                               ),
                             ),
                           ),
@@ -410,7 +472,6 @@ class _LoginScreenState extends State<LoginScreen>
                       ),
                     ),
                   ),
-
                   const SizedBox(height: 21),
                   Center(
                     child: RichText(
@@ -428,7 +489,7 @@ class _LoginScreenState extends State<LoginScreen>
                               fontWeight: FontWeight.bold,
                             ),
                             recognizer: TapGestureRecognizer()
-                              ..onTap = _navigateToSignUp, // Sign Up
+                              ..onTap = _navigateToSignUp,
                           ),
                         ],
                       ),
@@ -477,6 +538,7 @@ class CustomInputField extends StatelessWidget {
   final bool obscureText;
   final Widget? suffixIcon;
   final Widget? prefixIcon;
+  final TextEditingController? controller;
   final ValueChanged<String>? onChanged;
 
   const CustomInputField({
@@ -487,6 +549,7 @@ class CustomInputField extends StatelessWidget {
     this.obscureText = false,
     this.suffixIcon,
     this.prefixIcon,
+    this.controller,
     this.onChanged,
   });
 
@@ -504,6 +567,7 @@ class CustomInputField extends StatelessWidget {
         ),
         const SizedBox(height: 8),
         TextField(
+          controller: controller,
           obscureText: obscureText,
           onChanged: onChanged,
           decoration: InputDecoration(

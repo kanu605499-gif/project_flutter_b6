@@ -1,8 +1,13 @@
 import 'package:flutter/material.dart';
-import 'package:project_flutter_b6/uii.dart';
+
+import 'tugas9ui.dart';
 
 class AmomimusApp4 extends StatefulWidget {
-  const AmomimusApp4({super.key});
+  // Menambahkan parameter nama dan karakter di constructor AmomimusApp4
+  final String nama;
+  final String karakter;
+
+  const AmomimusApp4({super.key, required this.nama, required this.karakter});
 
   @override
   State<AmomimusApp4> createState() => _AmomimusApp4State();
@@ -32,7 +37,10 @@ class _AmomimusApp4State extends State<AmomimusApp4> {
         : const Color(0xffe1dbec);
 
     final List<Widget> pages = [
+      // Meneruskan data nama dan karakter ke AmomimusFormPage
       AmomimusFormPage(
+        nama: widget.nama,
+        karakter: widget.karakter,
         isDarkMode: _isDarkMode,
         onThemeChanged: _toggleDarkMode,
       ),
@@ -55,7 +63,7 @@ class _AmomimusApp4State extends State<AmomimusApp4> {
             style: TextStyle(
               color: mainTextColor,
               fontWeight: FontWeight.bold,
-              fontSize: 19,
+              fontSize: 18,
               fontFamily: 'Sans-Serif',
             ),
             children: [
@@ -204,11 +212,16 @@ class _AmomimusApp4State extends State<AmomimusApp4> {
 }
 
 class AmomimusFormPage extends StatefulWidget {
+  // Menambahkan parameter nama dan karakter di constructor AmomimusFormPage
+  final String nama;
+  final String karakter;
   final bool isDarkMode;
   final ValueChanged<bool> onThemeChanged;
 
   const AmomimusFormPage({
     super.key,
+    required this.nama,
+    required this.karakter,
     required this.isDarkMode,
     required this.onThemeChanged,
   });
@@ -625,7 +638,7 @@ class _AmomimusFormPageState extends State<AmomimusFormPage>
                                 Navigator.push(
                                   context,
                                   MaterialPageRoute(
-                                    builder: (context) => AmomimusApp1(),
+                                    builder: (context) => AmomimusApp5(),
                                   ),
                                 );
                               }
