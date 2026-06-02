@@ -3,6 +3,8 @@ import 'dart:math' as math;
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 
+import 'database/db_helper.dart';
+import 'database/models/tugas11_user_register_sql.dart';
 import 'welcometoourules.dart';
 
 class AmomimusApp3 extends StatefulWidget {
@@ -17,7 +19,7 @@ class _AmomimusApp3State extends State<AmomimusApp3>
   final _formKey = GlobalKey<FormState>();
   final TextEditingController _nameController = TextEditingController();
   final TextEditingController _emailController = TextEditingController();
-  final TextEditingController _phoneController = TextEditingController();
+  final TextEditingController _passwordController = TextEditingController();
   final TextEditingController _cityController = TextEditingController();
   late final AnimationController _floatingController;
 
@@ -35,7 +37,7 @@ class _AmomimusApp3State extends State<AmomimusApp3>
     _floatingController.dispose();
     _nameController.dispose();
     _emailController.dispose();
-    _phoneController.dispose();
+    _passwordController.dispose();
     _cityController.dispose();
     super.dispose();
   }
@@ -112,12 +114,7 @@ class _AmomimusApp3State extends State<AmomimusApp3>
                       const SizedBox(height: 20),
                       _buildDataTile('EMAIL ADDRESS', _emailController.text),
                       const SizedBox(height: 20),
-                      _buildDataTile(
-                        'PHONE NUMBER',
-                        _phoneController.text.isEmpty
-                            ? "-"
-                            : _phoneController.text,
-                      ),
+                      _buildDataTile('PASSWORD', '••••••••'),
                       const SizedBox(height: 20),
                       _buildDataTile(
                         'FAVORITE CHARACTER',
@@ -153,9 +150,45 @@ class _AmomimusApp3State extends State<AmomimusApp3>
                           ),
                           elevation: 0,
                         ),
-                        onPressed: () {
+                        onPressed: () async {
                           Navigator.pop(dialogContext);
-                          _showSuccessDialog();
+
+                          final newUser = UserModelSql(
+                            fullName: _nameController.text,
+                            email: _emailController.text,
+                            favoriteCharacter: _cityController.text,
+                            password: _passwordController.text,
+                          );
+
+                          bool isSuccess = await DBHelper().registerUser(
+                            newUser,
+                          );
+
+                          if (context.mounted) {
+                            if (isSuccess) {
+                              // 2. Kalau BENAR-BENAR sukses masuk DB, baru boleh pindah halaman
+                              print("==== REGISTRASI REAL-TIME SUKSES ==== ");
+                              Navigator.pushReplacement(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => AmomimusApp4(
+                                    nama: _nameController.text,
+                                    karakter: _cityController.text,
+                                  ),
+                                ),
+                              );
+                            } else {
+                              // 3. Kalau gagal, tampilin ScaffoldMessenger biar keliatan errornya
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                const SnackBar(
+                                  content: Text(
+                                    'Gagal menyimpan data ke database! Cek log konsol.',
+                                  ),
+                                  backgroundColor: Colors.redAccent,
+                                ),
+                              );
+                            }
+                          }
                         },
                         child: const Text(
                           'Lanjut',
@@ -273,17 +306,29 @@ class _AmomimusApp3State extends State<AmomimusApp3>
                           ),
                           elevation: 0,
                         ),
-                        onPressed: () {
+                        onPressed: () async {
                           Navigator.pop(dialogContext);
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => AmomimusApp4(
-                                nama: _nameController.text,
-                                karakter: _cityController.text,
-                              ),
-                            ),
+
+                          final newUser = UserModelSql(
+                            fullName: _nameController.text,
+                            email: _emailController.text,
+                            favoriteCharacter: _cityController.text,
+                            password: _passwordController.text,
                           );
+
+                          await DBHelper().registerUser(newUser);
+
+                          if (context.mounted) {
+                            Navigator.pushReplacement(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => AmomimusApp4(
+                                  nama: _nameController.text,
+                                  karakter: _cityController.text,
+                                ),
+                              ),
+                            );
+                          }
                         },
                         child: const Text(
                           'Lanjut',
@@ -412,16 +457,34 @@ class _AmomimusApp3State extends State<AmomimusApp3>
                       hintText: 'Input your email here',
                       controller: _emailController,
                       keyboardType: TextInputType.emailAddress,
-                      validator: (v) => v != null && v.contains('@')
-                          ? null
-                          : 'Valid E-mail is required',
+                      validator: (v) {
+                        if (v == null || v.isEmpty) {
+                          return 'Your email is required';
+                        }
+                        final emailRegex = RegExp(
+                          r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$',
+                        );
+                        if (!emailRegex.hasMatch(v)) {
+                          return 'Valid E-mail is required';
+                        }
+                        return null;
+                      },
                     ),
                     const SizedBox(height: 20),
                     CustomInputField(
-                      label: 'PHONE NUMBER (OPTIONAL)',
-                      hintText: 'Input your phone number here',
-                      controller: _phoneController,
-                      keyboardType: TextInputType.phone,
+                      label: 'PASSWORD',
+                      hintText: 'Input your password here',
+                      controller: _passwordController,
+                      isPassword: true,
+                      validator: (v) {
+                        if (v == null || v.isEmpty) {
+                          return 'Password is required';
+                        }
+                        if (v.length < 6) {
+                          return 'Password must be at least 6 characters';
+                        }
+                        return null;
+                      },
                     ),
                     const SizedBox(height: 20),
                     CustomInputField(
@@ -483,8 +546,8 @@ class _AmomimusApp3State extends State<AmomimusApp3>
                               width: 24,
                               height: 24,
                             ),
-                            SizedBox(width: 12),
-                            Text(
+                            const SizedBox(width: 12),
+                            const Text(
                               'Sign up with Google',
                               style: TextStyle(
                                 color: Color(0xff121212),
@@ -581,13 +644,14 @@ class _AmomimusApp3State extends State<AmomimusApp3>
   }
 }
 
-class CustomInputField extends StatelessWidget {
+class CustomInputField extends StatefulWidget {
   final String label;
   final String hintText;
   final TextEditingController controller;
   final FormFieldValidator<String>? validator;
   final TextInputType? keyboardType;
   final Color focusedBorderColor;
+  final bool isPassword;
 
   const CustomInputField({
     super.key,
@@ -597,7 +661,15 @@ class CustomInputField extends StatelessWidget {
     this.validator,
     this.keyboardType,
     this.focusedBorderColor = const Color(0xFFFFD54F),
+    this.isPassword = false,
   });
+
+  @override
+  State<CustomInputField> createState() => _CustomInputFieldState();
+}
+
+class _CustomInputFieldState extends State<CustomInputField> {
+  bool _obscureText = true;
 
   @override
   Widget build(BuildContext context) {
@@ -605,7 +677,7 @@ class CustomInputField extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          label,
+          widget.label,
           style: const TextStyle(
             fontWeight: FontWeight.w600,
             color: Color(0xff2d2d2d),
@@ -613,23 +685,42 @@ class CustomInputField extends StatelessWidget {
         ),
         const SizedBox(height: 8),
         TextFormField(
-          controller: controller,
-          validator: validator,
-          keyboardType: keyboardType,
+          controller: widget.controller,
+          validator: widget.validator,
+          keyboardType: widget.keyboardType,
+          obscureText: widget.isPassword ? _obscureText : false,
           autovalidateMode: AutovalidateMode.onUserInteraction,
           decoration: InputDecoration(
-            hintText: hintText,
+            hintText: widget.hintText,
             hintStyle: const TextStyle(color: Color(0xffdadada), fontSize: 14),
             filled: true,
             fillColor: const Color(0xfff8f6fc),
             contentPadding: const EdgeInsets.all(16),
+            suffixIcon: widget.isPassword
+                ? IconButton(
+                    icon: Icon(
+                      _obscureText
+                          ? Icons.visibility_off_rounded
+                          : Icons.visibility_rounded,
+                      color: const Color(0xff9e9bc2),
+                    ),
+                    onPressed: () {
+                      setState(() {
+                        _obscureText = !_obscureText;
+                      });
+                    },
+                  )
+                : null,
             enabledBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(14),
               borderSide: const BorderSide(color: Color(0xffe1dbec)),
             ),
             focusedBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(14),
-              borderSide: BorderSide(color: focusedBorderColor, width: 2.0),
+              borderSide: BorderSide(
+                color: widget.focusedBorderColor,
+                width: 2.0,
+              ),
             ),
             errorBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(14),

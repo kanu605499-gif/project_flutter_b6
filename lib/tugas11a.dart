@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:project_flutter_b6/Tugas9UI.dart';
 import 'package:project_flutter_b6/database/preference_handler.dart';
-import 'package:project_flutter_b6/login.dart';
+import 'package:project_flutter_b6/tugas1101.dart';
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
@@ -27,7 +27,7 @@ class _SplashScreenState extends State<SplashScreen> {
         context,
         MaterialPageRoute(
           builder: (context) =>
-              isLoggedIn ? const AmomimusApp5() : const LoginScreen(),
+              isLoggedIn ? const AmomimusApp5() : const AmomimusApp2(),
         ),
       );
     }

@@ -4,9 +4,9 @@ import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:project_flutter_b6/login.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 import 'amomimusdark.dart';
+import 'database/preference_handler.dart';
 import 'tugas9model.dart';
 
 class AmomimusApp5 extends StatefulWidget {
@@ -549,29 +549,16 @@ class _AmomimusApp5State extends State<AmomimusApp5>
                         style: TextStyle(color: Colors.red),
                       ),
                       onTap: () async {
-                        showDialog(
-                          context: context,
-                          barrierDismissible: false,
-                          builder: (context) => const Center(
-                            child: CircularProgressIndicator(color: Colors.red),
-                          ),
-                        );
-
-                        final prefs = await SharedPreferences.getInstance();
-                        await prefs.setBool('isLoggedin', false);
+                        await PreferenceHandler.logOut();
 
                         if (!context.mounted) return;
 
-                        Navigator.of(context, rootNavigator: true).pop();
-
-                        if (context.mounted) {
-                          Navigator.of(context).pushAndRemoveUntil(
-                            MaterialPageRoute(
-                              builder: (context) => const AmomimusApp2(),
-                            ),
-                            (route) => false,
-                          );
-                        }
+                        Navigator.of(context).pushAndRemoveUntil(
+                          MaterialPageRoute(
+                            builder: (context) => const AmomimusApp2(),
+                          ),
+                          (route) => false,
+                        );
                       },
                     ),
                     const SizedBox(height: 20),
@@ -680,78 +667,66 @@ class _FeedCardState extends State<FeedCard> {
                     ),
                   ),
                   const SizedBox(width: 8),
-                  Theme(
-                    data: Theme.of(context).copyWith(
-                      popupMenuTheme: PopupMenuThemeData(
-                        color: isDarkCard
-                            ? AmomimusDarkTheme.policeLineYellow
-                            : Colors.white,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(12),
-                        ),
-                      ),
+                  PopupMenuButton<String>(
+                    icon: Icon(
+                      Icons.more_vert,
+                      size: 18,
+                      color: isDarkCard
+                          ? AmomimusDarkTheme.textSecondary
+                          : Colors.grey,
                     ),
-                    child: PopupMenuButton<String>(
-                      icon: Icon(
-                        Icons.more_vert,
-                        size: 18,
-                        color: isDarkCard
-                            ? AmomimusDarkTheme.textSecondary
-                            : Colors.grey,
-                      ),
-                      constraints: const BoxConstraints(
-                        minWidth: 120,
-                        maxWidth: 180,
-                      ),
-                      onOpened: () => setState(() => isMenuOpen = true),
-                      onCanceled: () => setState(() => isMenuOpen = false),
-                      onSelected: (value) => setState(() => isMenuOpen = false),
-                      itemBuilder: (BuildContext context) {
-                        final contentColor = isDarkCard
-                            ? Colors.black
-                            : Colors.black87;
-                        final reportColor = Colors.red;
+                    constraints: const BoxConstraints(
+                      minWidth: 120,
+                      maxWidth: 180,
+                    ),
+                    onOpened: () => setState(() => isMenuOpen = true),
+                    onCanceled: () => setState(() => isMenuOpen = false),
+                    onSelected: (value) => setState(() => isMenuOpen = false),
+                    itemBuilder: (BuildContext context) {
+                      final contentColor = isDarkCard
+                          ? Colors.black
+                          : Colors.black87;
+                      final reportColor = Colors.red;
 
-                        return <PopupMenuEntry<String>>[
-                          PopupMenuItem<String>(
-                            value: 'chat',
-                            child: ListTile(
-                              leading: Icon(
-                                Icons.chat_bubble_outline,
+                      return <PopupMenuEntry<String>>[
+                        PopupMenuItem<String>(
+                          value: 'chat',
+                          child: ListTile(
+                            leading: Icon(
+                              Icons.chat_bubble_outline,
+                              color: contentColor,
+                            ),
+                            title: Text(
+                              "Chat this Amomim",
+                              style: TextStyle(
+                                fontSize: 15,
+                                fontWeight: FontWeight.bold,
                                 color: contentColor,
                               ),
-                              title: Text(
-                                "Chat this Amomim",
-                                style: TextStyle(
-                                  fontSize: 15,
-                                  fontWeight: FontWeight.bold,
-                                  color: contentColor,
-                                ),
-                              ),
-                              contentPadding: EdgeInsets.zero,
                             ),
+                            contentPadding: EdgeInsets.zero,
                           ),
-                          PopupMenuItem<String>(
-                            value: 'report',
-                            child: ListTile(
-                              leading: Icon(
-                                Icons.sentiment_very_dissatisfied_outlined,
+                        ),
+                        PopupMenuItem<String>(
+                          value: 'report',
+                          child: ListTile(
+                            leading: Icon(
+                              Icons.sentiment_very_dissatisfied_outlined,
+                              color: reportColor,
+                            ),
+                            title: Text(
+                              "Report this Amomim",
+                              style: TextStyle(
+                                fontSize: 15,
+                                fontWeight: FontWeight.bold,
                                 color: reportColor,
                               ),
-                              title: Text(
-                                "Report this Amomim",
-                                style: TextStyle(
-                                  fontSize: 15,
-                                  fontWeight: FontWeight.bold,
-                                  color: reportColor,
-                                ),
-                              ),
-                              contentPadding: EdgeInsets.zero,
                             ),
+                            contentPadding: EdgeInsets.zero,
                           ),
-                        ];
-                      },
-                    ),
+                        ),
+                      ];
+                    },
                   ),
                 ],
               ),
