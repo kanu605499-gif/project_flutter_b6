@@ -5,7 +5,7 @@ import 'package:flutter/material.dart';
 
 import 'database/db_helper.dart';
 import 'database/models/tugas11_user_register_sql.dart';
-import 'welcometoourules.dart';
+import 'uii.dart';
 
 class AmomimusApp3 extends StatefulWidget {
   const AmomimusApp3({super.key});
@@ -171,9 +171,9 @@ class _AmomimusApp3State extends State<AmomimusApp3>
                               Navigator.pushReplacement(
                                 context,
                                 MaterialPageRoute(
-                                  builder: (context) => AmomimusApp4(
-                                    nama: _nameController.text,
-                                    karakter: _cityController.text,
+                                  builder: (context) => AmomimusApp1(
+                                    email: _emailController.text,
+                                    realUsername: _nameController.text,
                                   ),
                                 ),
                               );
@@ -322,9 +322,9 @@ class _AmomimusApp3State extends State<AmomimusApp3>
                             Navigator.pushReplacement(
                               context,
                               MaterialPageRoute(
-                                builder: (context) => AmomimusApp4(
-                                  nama: _nameController.text,
-                                  karakter: _cityController.text,
+                                builder: (context) => AmomimusApp1(
+                                  email: _emailController.text,
+                                  realUsername: _nameController.text,
                                 ),
                               ),
                             );

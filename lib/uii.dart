@@ -1,15 +1,19 @@
 import 'package:flutter/material.dart';
-import 'package:project_flutter_b6/tugas9ui.dart';
+import 'package:project_flutter_b6/Tugas9UI.dart';
+import 'package:project_flutter_b6/welcometoourules.dart';
 
 void main() {
   runApp(
-    const MaterialApp(debugShowCheckedModeBanner: false, home: AmomimusApp1()),
+    const MaterialApp(debugShowCheckedModeBanner: false, home: AmomimusApp1(email: '', realUsername: '')),
   );
 }
 
 // MyGenderOpsi
 class AmomimusApp1 extends StatefulWidget {
-  const AmomimusApp1({super.key});
+  final String email;
+  final String realUsername;
+
+  const AmomimusApp1({super.key, required this.email, required this.realUsername});
 
   @override
   State<AmomimusApp1> createState() => AmomimusApp1state();
@@ -346,8 +350,9 @@ class AmomimusApp1state extends State<AmomimusApp1>
                     },
                     onDoubleTap: () {
                       setState(() {
-                        if (_anonCounter > 0)
+                        if (_anonCounter > 0) {
                           _anonCounter -= 1; // Ketuk 2 kali buat ngurangin 1
+                        }
                       });
                       print("Dikurang 1 via Double Tap");
                     },
@@ -405,9 +410,27 @@ class AmomimusApp1state extends State<AmomimusApp1>
       floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
       floatingActionButton: FloatingActionButton(
         onPressed: () {
+          // Parse gender from _karakterOpsi. Example "Your chosen Amomus: Amom"
+          String gender = "Amo"; // default
+          if (_karakterOpsi.contains("Amom")) {
+            gender = "Amom";
+          } else if (_karakterOpsi.contains("Ami")) {
+            gender = "Ami";
+          } else if (_karakterOpsi.contains("Amo")) {
+            gender = "Amo";
+          }
+          
           Navigator.push(
             context,
-            MaterialPageRoute(builder: (context) => AmomimusApp5()),
+            MaterialPageRoute(
+              builder: (context) => AmomimusApp4(
+                email: widget.email,
+                realUsername: widget.realUsername,
+                anonymousUsername: _usernameController.text.isEmpty ? "Anonymous" : _usernameController.text,
+                amomimusId: "#AMM-${(_anonCounter * 73) % 1000}",
+                gender: gender,
+              ),
+            ),
           );
         },
         backgroundColor: const Color(0xFF8C72C4),

@@ -44,7 +44,6 @@ class DBHelper {
         "==== DEBUG DB: Mencoba mendaftarkan email: ${pengguna.email} ====",
       );
 
-      // Proses insert CUMA SEKALI saja
       final int result = await db.insert('users', pengguna.toMap());
 
       if (result > 0) {
@@ -55,7 +54,6 @@ class DBHelper {
         return false;
       }
     } catch (e) {
-      // Kalau ada error (misal nama kolom salah di toMap), bakal ketahuan di sini
       print("Error saat register: $e");
       return false;
     }
@@ -90,5 +88,14 @@ class DBHelper {
     return List.generate(maps.length, (i) {
       return UserModelSql.fromMap(maps[i]);
     });
+  }
+
+  Future<int> deleteUser(String email) async {
+    final db = await database; // Your SQLite open database instance
+    return await db.delete(
+      'users', // Double check your target table name matches your registration schema
+      where: 'email = ?',
+      whereArgs: [email],
+    );
   }
 }

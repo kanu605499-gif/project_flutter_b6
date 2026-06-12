@@ -1,6 +1,19 @@
 import 'package:flutter/material.dart';
 
-class AmomimusDarkTheme {
+class AmomimusDarkTheme extends ChangeNotifier {
+  // 1. State privat untuk menyimpan kondisi tema saat ini (Default: Dark Mode = true)
+  bool _isDarkMode = true;
+
+  // 2. Getter public agar bisa dibaca dari berkas utama (mencegah error merah)
+  bool get isDarkMode => _isDarkMode;
+
+  // 3. Fungsi untuk mengganti tema secara real-time
+  void toggleTheme() {
+    _isDarkMode = !_isDarkMode;
+    notifyListeners(); // Memberitahu Flutter untuk menggambar ulang UI yang menggunakan tema ini
+  }
+
+  // --- Konstanta Warna Utama ---
   static const Color primaryPurple = Color(0xff8c72c4);
   static const Color backgroundDark = Color(0xff121212);
   static const Color surfaceDark = Color(0xff1e1e1e);
@@ -11,79 +24,162 @@ class AmomimusDarkTheme {
   static const Color dividerDark = Color(0xff2d2d2d);
   static const Color shadowColor = Colors.black;
 
-  static ThemeData get themeData {
-    return ThemeData(
-      useMaterial3: true,
-      brightness: Brightness.dark,
-      scaffoldBackgroundColor: backgroundDark,
+  // --- Getter ThemeData Dinamis ---
+  // Mengembalikan data tema gelap atau terang berdasarkan nilai _isDarkMode
+  ThemeData get currentThemeData {
+    if (_isDarkMode) {
+      return ThemeData(
+        useMaterial3: true,
+        brightness: Brightness.dark,
+        scaffoldBackgroundColor: backgroundDark,
 
-      textTheme: const TextTheme(
-        bodyLarge: TextStyle(color: textPrimary),
-        bodyMedium: TextStyle(color: textSecondary),
-        titleLarge: TextStyle(color: textPrimary, fontWeight: FontWeight.bold),
-      ),
-
-      appBarTheme: const AppBarTheme(
-        backgroundColor: backgroundDark,
-        surfaceTintColor: Colors.transparent,
-        elevation: 0,
-        centerTitle: false,
-        iconTheme: IconThemeData(color: textPrimary),
-        titleTextStyle: TextStyle(
-          fontWeight: FontWeight.bold,
-          color: primaryPurple,
-          fontSize: 20,
+        textTheme: const TextTheme(
+          bodyLarge: TextStyle(color: textPrimary),
+          bodyMedium: TextStyle(color: textSecondary),
+          titleLarge: TextStyle(
+            color: textPrimary,
+            fontWeight: FontWeight.bold,
+          ),
         ),
-      ),
 
-      floatingActionButtonTheme: const FloatingActionButtonThemeData(
-        backgroundColor: primaryPurple,
-        foregroundColor: Colors.black,
-        elevation: 6,
-        shape: CircleBorder(),
-      ),
-
-      bottomAppBarTheme: const BottomAppBarThemeData(
-        color: surfaceDark,
-        elevation: 0,
-      ),
-
-      drawerTheme: const DrawerThemeData(
-        backgroundColor: backgroundDark,
-        elevation: 16,
-      ),
-
-      dividerTheme: const DividerThemeData(
-        color: dividerDark,
-        thickness: 1,
-        space: 1,
-      ),
-
-      popupMenuTheme: PopupMenuThemeData(
-        color: policeLineYellow,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-        elevation: 4,
-        textStyle: const TextStyle(
-          color: Colors.black,
-          fontWeight: FontWeight.bold,
+        appBarTheme: const AppBarTheme(
+          backgroundColor: backgroundDark,
+          surfaceTintColor: Colors.transparent,
+          elevation: 0,
+          centerTitle: false,
+          iconTheme: IconThemeData(color: textPrimary),
+          titleTextStyle: TextStyle(
+            fontWeight: FontWeight.bold,
+            color: primaryPurple,
+            fontSize: 20,
+          ),
         ),
-      ),
 
-      listTileTheme: const ListTileThemeData(
-        iconColor: textSecondary,
-        textColor: textPrimary,
-        horizontalTitleGap: 12,
-      ),
-    );
+        floatingActionButtonTheme: const FloatingActionButtonThemeData(
+          backgroundColor: primaryPurple,
+          foregroundColor: Colors.black,
+          elevation: 6,
+          shape: CircleBorder(),
+        ),
+
+        bottomAppBarTheme: const BottomAppBarThemeData(
+          color: surfaceDark,
+          elevation: 0,
+        ),
+
+        drawerTheme: const DrawerThemeData(
+          backgroundColor: backgroundDark,
+          elevation: 16,
+        ),
+
+        dividerTheme: const DividerThemeData(
+          color: dividerDark,
+          thickness: 1,
+          space: 1,
+        ),
+
+        popupMenuTheme: PopupMenuThemeData(
+          color: policeLineYellow,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(12),
+          ),
+          elevation: 4,
+          textStyle: const TextStyle(
+            color: Colors.black,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+
+        listTileTheme: const ListTileThemeData(
+          iconColor: textSecondary,
+          textColor: textPrimary,
+          horizontalTitleGap: 12,
+        ),
+      );
+    } else {
+      // Skema warna untuk Light Mode (Mode Terang)
+      return ThemeData(
+        useMaterial3: true,
+        brightness: Brightness.light,
+        scaffoldBackgroundColor: Colors.white,
+
+        textTheme: const TextTheme(
+          bodyLarge: TextStyle(color: Colors.black87),
+          bodyMedium: TextStyle(color: Colors.black54),
+          titleLarge: TextStyle(
+            color: Colors.black87,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+
+        appBarTheme: const AppBarTheme(
+          backgroundColor: Colors.white,
+          surfaceTintColor: Colors.transparent,
+          elevation: 0,
+          centerTitle: false,
+          iconTheme: IconThemeData(color: Colors.black87),
+          titleTextStyle: TextStyle(
+            fontWeight: FontWeight.bold,
+            color: primaryPurple,
+            fontSize: 20,
+          ),
+        ),
+
+        floatingActionButtonTheme: const FloatingActionButtonThemeData(
+          backgroundColor: primaryPurple,
+          foregroundColor: Colors.white,
+          elevation: 6,
+          shape: CircleBorder(),
+        ),
+
+        bottomAppBarTheme: const BottomAppBarThemeData(
+          color: Color(0xFFF5F5F5),
+          elevation: 0,
+        ),
+
+        drawerTheme: const DrawerThemeData(
+          backgroundColor: Colors.white,
+          elevation: 16,
+        ),
+
+        dividerTheme: DividerThemeData(
+          color: Colors.grey[300],
+          thickness: 1,
+          space: 1,
+        ),
+
+        popupMenuTheme: PopupMenuThemeData(
+          color: Colors.white,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(12),
+          ),
+          elevation: 4,
+          textStyle: const TextStyle(
+            color: Colors.black87,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+
+        listTileTheme: const ListTileThemeData(
+          iconColor: Colors.black54,
+          textColor: Colors.black87,
+          horizontalTitleGap: 12,
+        ),
+      );
+    }
   }
 
-  static BoxDecoration get cardDecoration {
+  // --- Getter Dekorasi Dinamis ---
+  BoxDecoration get cardDecoration {
     return BoxDecoration(
-      color: surfaceDark,
+      color: _isDarkMode ? surfaceDark : Colors.white,
       borderRadius: BorderRadius.circular(16),
+      border: _isDarkMode ? null : Border.all(color: Colors.grey[300]!),
       boxShadow: [
         BoxShadow(
-          color: shadowColor.withOpacity(0.3),
+          color: _isDarkMode
+              ? shadowColor.withOpacity(0.3)
+              : Colors.grey.withOpacity(0.2),
           blurRadius: 10,
           offset: const Offset(0, 4),
         ),
@@ -91,5 +187,10 @@ class AmomimusDarkTheme {
     );
   }
 
-  static Color get blurOverlayColor => backgroundDark.withOpacity(0.75);
+  Color get blurOverlayColor => _isDarkMode
+      ? backgroundDark.withOpacity(0.75)
+      : Colors.white.withOpacity(0.75);
+
+  // Tetap mempertahankan properti static lama agar tidak merusak halaman lain yang memanggil secara langsung
+  static ThemeData get themeData => AmomimusDarkTheme().currentThemeData;
 }

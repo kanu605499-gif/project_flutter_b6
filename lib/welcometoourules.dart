@@ -1,13 +1,25 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 import 'tugas9ui.dart';
+import 'database_helper.dart';
+import 'account_manager.dart';
 
 class AmomimusApp4 extends StatefulWidget {
-  // Menambahkan parameter nama dan karakter di constructor AmomimusApp4
-  final String nama;
-  final String karakter;
+  final String email;
+  final String realUsername;
+  final String anonymousUsername;
+  final String amomimusId;
+  final String gender;
 
-  const AmomimusApp4({super.key, required this.nama, required this.karakter});
+  const AmomimusApp4({
+    super.key,
+    required this.email,
+    required this.realUsername,
+    required this.anonymousUsername,
+    required this.amomimusId,
+    required this.gender,
+  });
 
   @override
   State<AmomimusApp4> createState() => _AmomimusApp4State();
@@ -37,12 +49,13 @@ class _AmomimusApp4State extends State<AmomimusApp4> {
         : const Color(0xffe1dbec);
 
     final List<Widget> pages = [
-      // Meneruskan data nama dan karakter ke AmomimusFormPage
       AmomimusFormPage(
-        nama: widget.nama,
-        karakter: widget.karakter,
+        email: widget.email,
+        realUsername: widget.realUsername,
+        anonymousUsername: widget.anonymousUsername,
+        amomimusId: widget.amomimusId,
+        gender: widget.gender,
         isDarkMode: _isDarkMode,
-        onThemeChanged: _toggleDarkMode,
       ),
       AboutPage(
         isDarkMode: _isDarkMode,
@@ -212,18 +225,21 @@ class _AmomimusApp4State extends State<AmomimusApp4> {
 }
 
 class AmomimusFormPage extends StatefulWidget {
-  // Menambahkan parameter nama dan karakter di constructor AmomimusFormPage
-  final String nama;
-  final String karakter;
+  final String email;
+  final String realUsername;
+  final String anonymousUsername;
+  final String amomimusId;
+  final String gender;
   final bool isDarkMode;
-  final ValueChanged<bool> onThemeChanged;
 
   const AmomimusFormPage({
     super.key,
-    required this.nama,
-    required this.karakter,
+    required this.email,
+    required this.realUsername,
+    required this.anonymousUsername,
+    required this.amomimusId,
+    required this.gender,
     required this.isDarkMode,
-    required this.onThemeChanged,
   });
 
   @override
@@ -615,17 +631,6 @@ class _AmomimusFormPageState extends State<AmomimusFormPage>
                             },
                           ),
                         ),
-                        Transform.scale(
-                          scale: 0.85,
-                          child: Switch(
-                            value: widget.isDarkMode,
-                            activeThumbColor: const Color(0xff8c72c4),
-                            activeTrackColor: const Color(
-                              0xff8c72c4,
-                            ).withOpacity(0.4),
-                            onChanged: widget.onThemeChanged,
-                          ),
-                        ),
                       ],
                     ),
                     const SizedBox(height: 16),
@@ -634,13 +639,27 @@ class _AmomimusFormPageState extends State<AmomimusFormPage>
                       height: 54,
                       child: ElevatedButton(
                         onPressed: _hasAcceptedTerms
-                            ? () {
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (context) => AmomimusApp5(),
-                                  ),
+                            ? () async {
+                                final newUser = UserAccount(
+                                  email: widget.email,
+                                  realUsername: widget.realUsername,
+                                  anonymousUsername: widget.anonymousUsername,
+                                  amomimusId: widget.amomimusId,
+                                  gender: widget.gender,
+                                  registrationDate: _getFormattedDate(),
+                                  isDemo: true, // User created demo account
                                 );
+                                
+                                await Provider.of<AccountManager>(context, listen: false).registerAndLogin(newUser);
+
+                                if (context.mounted) {
+                                  Navigator.pushReplacement(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) => const AmomimusApp5(),
+                                    ),
+                                  );
+                                }
                               }
                             : null,
                         style: ElevatedButton.styleFrom(

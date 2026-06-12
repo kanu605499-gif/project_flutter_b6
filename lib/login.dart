@@ -47,7 +47,6 @@ class _LoginScreenState extends State<LoginScreen>
   String? _passwordErrorMsg;
   bool _showEasterEggBubble = false;
 
-  // 🔴 1. VARIABEL BARU UNTUK LIST VIEW
   Future<List<UserModelSql>>? _userListFuture;
 
   @override
@@ -58,12 +57,9 @@ class _LoginScreenState extends State<LoginScreen>
       vsync: this,
     )..repeat(reverse: true);
     _loadSavedPreferences();
-
-    // 🔴 2. PANGGIL DATA PERTAMA KALI SAAT HALAMAN DIBUKA
     _refreshUserList();
   }
 
-  // 🔴 3. FUNGSI BARU UNTUK REFRESH DATA REAL-TIME
   void _refreshUserList() {
     setState(() {
       _userListFuture = DBHelper().getAllUsers();
@@ -161,23 +157,72 @@ class _LoginScreenState extends State<LoginScreen>
     }
   }
 
-  // 🔴 4. MODIFIKASI NAVIGASI SUPAYA OTOMATIS REFRESH PAS BALIK DARI REGISTER
   void _navigateToSignUp() {
     Navigator.push(
       context,
       MaterialPageRoute(builder: (context) => const AmomimusApp3()),
     ).then((_) {
-      _refreshUserList(); // Sihir pembawa auto-refresh
+      _refreshUserList();
     });
   }
 
   void _handleGoogleLogin() {}
+
+  // Extracted Dialog to prevent Context/Navigator collision mutations
+  void _showDeleteConfirmation(BuildContext context, UserModelSql user) async {
+    // 1. Show the dialog and await the user choice (returns true if deleted)
+    final shouldRefresh = await showDialog<bool>(
+      context: context,
+      builder: (BuildContext dialogContext) {
+        return AlertDialog(
+          title: const Text('Delete User'),
+          content: Text(
+            'Are you sure you want to remove ${user.fullName ?? "this user"}?',
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(dialogContext, false),
+              child: const Text('Cancel', style: TextStyle(color: Colors.grey)),
+            ),
+            TextButton(
+              onPressed: () async {
+                final userEmail = user.email?.toString();
+                if (userEmail != null && userEmail.isNotEmpty) {
+                  // Await database elimination inside dialog context
+                  await DBHelper().deleteUser(userEmail);
+
+                  if (!dialogContext.mounted) return;
+                  // Pop returning true to indicate successful execution
+                  Navigator.pop(dialogContext, true);
+                } else {
+                  Navigator.pop(dialogContext, false);
+                }
+              },
+              child: const Text('Delete', style: TextStyle(color: Colors.red)),
+            ),
+          ],
+        );
+      },
+    );
+    if (shouldRefresh == true) {
+      _refreshUserList();
+
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('${user.fullName ?? "User"} deleted'),
+          backgroundColor: Colors.orange,
+        ),
+      );
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: Stack(
         children: [
+          // Background Animation Decor 1
           Positioned(
             top: 31,
             left: -40,
@@ -209,6 +254,7 @@ class _LoginScreenState extends State<LoginScreen>
               ),
             ),
           ),
+          // Background Animation Decor 2
           Positioned(
             top: 150,
             bottom: 125,
@@ -244,6 +290,7 @@ class _LoginScreenState extends State<LoginScreen>
               ),
             ),
           ),
+          // Background Animation Decor 3
           Positioned(
             bottom: 31,
             right: -40,
@@ -275,6 +322,7 @@ class _LoginScreenState extends State<LoginScreen>
               ),
             ),
           ),
+          // Main Body
           SafeArea(
             child: SingleChildScrollView(
               padding: const EdgeInsets.symmetric(horizontal: 24.0),
@@ -332,7 +380,6 @@ class _LoginScreenState extends State<LoginScreen>
                                       fontSize: 12,
                                       fontWeight: FontWeight.w500,
                                     ),
-                                    textWidthBasis: TextWidthBasis.longestLine,
                                   ),
                                 ),
                               ),
@@ -560,8 +607,6 @@ class _LoginScreenState extends State<LoginScreen>
                       ],
                     ),
                   ),
-
-                  // 🔴 5. KODE BARU: DI SINI FUTUREBUILDER + LISTVIEW NYA BERADA
                   const SizedBox(height: 30),
                   const Divider(thickness: 1.5),
                   const SizedBox(height: 10),
@@ -577,11 +622,18 @@ class _LoginScreenState extends State<LoginScreen>
                     ),
                   ),
                   const SizedBox(height: 15),
+
+                  // SQLite List Field - Safely Managed Layout
                   FutureBuilder<List<UserModelSql>>(
                     future: _userListFuture,
                     builder: (context, snapshot) {
                       if (snapshot.connectionState == ConnectionState.waiting) {
-                        return const Center(child: CircularProgressIndicator());
+                        return const Center(
+                          child: Padding(
+                            padding: EdgeInsets.all(16.0),
+                            child: CircularProgressIndicator(),
+                          ),
+                        );
                       }
                       if (snapshot.hasError) {
                         return Center(child: Text('Error: ${snapshot.error}'));
@@ -591,20 +643,14 @@ class _LoginScreenState extends State<LoginScreen>
                       if (daftarUser == null || daftarUser.isEmpty) {
                         return const Center(
                           child: Padding(
-                            padding: EdgeInsets.all(8.0),
+                            padding: EdgeInsets.all(16.0),
                             child: Text('No users registered in SQLite yet.'),
                           ),
                         );
                       }
 
-                      return ListView.builder(
-                        shrinkWrap:
-                            true, // Biar ga crash di dalam SingleChildScrollView
-                        physics:
-                            const NeverScrollableScrollPhysics(), // Numpang scroll ke parent-nya
-                        itemCount: daftarUser.length,
-                        itemBuilder: (context, index) {
-                          final user = daftarUser[index];
+                      return Column(
+                        children: daftarUser.map((user) {
                           return Card(
                             elevation: 1,
                             margin: const EdgeInsets.symmetric(vertical: 6),
@@ -617,7 +663,8 @@ class _LoginScreenState extends State<LoginScreen>
                               leading: CircleAvatar(
                                 backgroundColor: const Color(0xff6c52a3),
                                 child: Text(
-                                  user.fullName?.isNotEmpty == true
+                                  user.fullName != null &&
+                                          user.fullName!.isNotEmpty
                                       ? user.fullName!
                                             .substring(0, 1)
                                             .toUpperCase()
@@ -631,13 +678,27 @@ class _LoginScreenState extends State<LoginScreen>
                                   fontWeight: FontWeight.bold,
                                 ),
                               ),
-                              subtitle: Text(
-                                'Email: ${user.email}\nFavorite Character: ${user.favoriteCharacter}',
+                              subtitle: Padding(
+                                padding: const EdgeInsets.only(top: 4.0),
+                                child: Text(
+                                  'Email: ${user.email ?? "-"}\nFavorite: ${user.favoriteCharacter ?? "-"}',
+                                  style: TextStyle(
+                                    color: Colors.grey[700],
+                                    fontSize: 13,
+                                  ),
+                                ),
                               ),
-                              isThreeLine: true,
+                              trailing: IconButton(
+                                icon: const Icon(
+                                  Icons.delete_outline,
+                                  color: Colors.redAccent,
+                                ),
+                                onPressed: () =>
+                                    _showDeleteConfirmation(context, user),
+                              ),
                             ),
                           );
-                        },
+                        }).toList(),
                       );
                     },
                   ),

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 class MyGrid extends StatelessWidget {
-  MyGrid({super.key});
+  const MyGrid({super.key});
 
   @override
   Widget build(BuildContext context) {
