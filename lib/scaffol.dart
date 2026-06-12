@@ -12,8 +12,7 @@ class ProfilePageOld0 extends StatelessWidget {
         backgroundColor: const Color.fromARGB(255, 0, 0, 0),
         foregroundColor: const Color.fromARGB(255, 255, 255, 255),
       ),
-      body: Container(
-        child: Padding(
+      body: Padding(
           padding: const EdgeInsets.all(20.0),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.center,
@@ -116,7 +115,6 @@ class ProfilePageOld0 extends StatelessWidget {
               ),
             ],
           ),
-        ),
       ),
     );
   }

@@ -1,6 +1,5 @@
-import 'package:path/path.dart';
-import 'package:sqflite/sqflite.dart';
-
+import 'dart:convert';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'models/tugas11_user_register_sql.dart';
 
 class DBHelper {
@@ -8,49 +7,54 @@ class DBHelper {
   factory DBHelper() => _instance;
   DBHelper._internal();
 
-  static Database? _database;
+  static const String _usersKey = 'amomimus_users';
 
-  Future<Database> get database async {
-    if (_database != null) return _database!;
-    _database = await _initDB();
-    return _database!;
-  }
+  Future<SharedPreferences> get _prefs async => await SharedPreferences.getInstance();
 
-  Future<Database> _initDB() async {
-    final dbPath = await getDatabasesPath();
-    final path = join(dbPath, 'amomimus.db');
+  Future<List<UserModelSql>> getAllUsers() async {
+    final prefs = await _prefs;
+    final String? usersJson = prefs.getString(_usersKey);
+    
+    if (usersJson == null) {
+      return [];
+    }
 
-    return await openDatabase(
-      path,
-      version: 1,
-      onCreate: (db, version) async {
-        await db.execute('''
-          CREATE TABLE users (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            full_name TEXT,
-            email TEXT NOT NULL UNIQUE,
-            password TEXT NOT NULL,
-            favorite_character TEXT
-          )
-        ''');
-      },
-    );
+    try {
+      final List<dynamic> decodedList = jsonDecode(usersJson);
+      return decodedList.map((item) => UserModelSql.fromMap(item)).toList();
+    } catch (e) {
+      print('Error decoding users: $e');
+      return [];
+    }
   }
 
   Future<bool> registerUser(UserModelSql pengguna) async {
-    final db = await database;
     try {
-      print(
-        "==== DEBUG DB: Mencoba mendaftarkan email: ${pengguna.email} ====",
+      print("==== DEBUG DB: Mencoba mendaftarkan email: ${pengguna.email} ====");
+      
+      final users = await getAllUsers();
+      
+      // Check if email already exists
+      if (users.any((u) => u.email == pengguna.email)) {
+        print("==== DEBUG DB: Registrasi GAGAL - Email sudah terdaftar ====");
+        return false;
+      }
+
+      // Assign an ID based on the current length + 1
+      final newUser = pengguna.copyWith(id: users.length + 1);
+      users.add(newUser);
+
+      final prefs = await _prefs;
+      final success = await prefs.setString(
+        _usersKey, 
+        jsonEncode(users.map((u) => u.toMap()).toList())
       );
 
-      final int result = await db.insert('users', pengguna.toMap());
-
-      if (result > 0) {
-        print("==== DEBUG DB: Registrasi BERHASIL dimasukkan ke SQLite ====");
+      if (success) {
+        print("==== DEBUG DB: Registrasi BERHASIL dimasukkan ke SharedPreferences ====");
         return true;
       } else {
-        print("==== DEBUG DB: Registrasi GAGAL dimasukkan ke SQLite ====");
+        print("==== DEBUG DB: Registrasi GAGAL disimpan ====");
         return false;
       }
     } catch (e) {
@@ -60,42 +64,37 @@ class DBHelper {
   }
 
   Future<UserModelSql?> loginUser(String email, String password) async {
-    final db = await database;
-
-    final List<Map<String, dynamic>> allUsers = await db.query('users');
+    final users = await getAllUsers();
+    
     print('==== DEBUG: ISI DATABASE USERS ====');
-    print(allUsers);
+    print(users.map((u) => u.toMap()).toList());
     print('===================================');
     print('Input Login -> Email: $email | Password: $password');
 
-    final List<Map<String, dynamic>> results = await db.query(
-      'users',
-      where: 'email = ? AND password = ?',
-      whereArgs: [email, password],
-    );
-
-    if (results.isNotEmpty) {
-      return UserModelSql.fromMap(results.first);
+    try {
+      return users.firstWhere(
+        (u) => u.email == email && u.password == password,
+      );
+    } catch (e) {
+      // firstWhere throws StateError if no element is found
+      return null;
     }
-    return null;
-  }
-
-  Future<List<UserModelSql>> getAllUsers() async {
-    final db = await database;
-
-    final List<Map<String, dynamic>> maps = await db.query('users');
-
-    return List.generate(maps.length, (i) {
-      return UserModelSql.fromMap(maps[i]);
-    });
   }
 
   Future<int> deleteUser(String email) async {
-    final db = await database; // Your SQLite open database instance
-    return await db.delete(
-      'users', // Double check your target table name matches your registration schema
-      where: 'email = ?',
-      whereArgs: [email],
-    );
+    final users = await getAllUsers();
+    final initialLength = users.length;
+    
+    users.removeWhere((u) => u.email == email);
+    
+    if (users.length < initialLength) {
+      final prefs = await _prefs;
+      await prefs.setString(
+        _usersKey, 
+        jsonEncode(users.map((u) => u.toMap()).toList())
+      );
+      return 1; // 1 row deleted
+    }
+    return 0; // 0 rows deleted
   }
 }
